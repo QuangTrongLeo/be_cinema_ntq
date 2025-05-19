@@ -1,0 +1,4 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+ntq.cinema.config.DotenvEnvironmentPostProcessor
+
+#org.springframework.boot.env.EnvironmentPostProcessor=ntq.cinema.config.DotenvEnvironmentPostProcessor
