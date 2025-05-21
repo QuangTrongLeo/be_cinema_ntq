@@ -2,6 +2,7 @@ package ntq.cinema.schedule_module.service;
 
 import ntq.cinema.movie_module.entity.Movie;
 import ntq.cinema.movie_module.repository.MovieRepository;
+import ntq.cinema.schedule_module.dto.request.schedule.ScheduleCreateRequest;
 import ntq.cinema.schedule_module.dto.response.schedule.ScheduleResponse;
 import ntq.cinema.schedule_module.entity.Schedule;
 import ntq.cinema.schedule_module.mapper.ScheduleMapper;
@@ -24,11 +25,21 @@ public class ScheduleService {
         this.scheduleMapper = scheduleMapper;
     }
 
-    // LẤY TẤT CẢ XUẤT CHIẾU CỦA PHIM BẰNG ID CỦA PHIM
+    // LẤY TẤT CẢ LỊCH CHIẾU CỦA PHIM BẰNG ID CỦA PHIM
     public List<ScheduleResponse> getSchedulesByMovieId(long movieId) {
         Movie movie = getMovieById(movieId);
         List<Schedule> schedules = getSchedulesByMovie(movie);
         return scheduleMapper.mapperToResponseList(schedules);
+    }
+
+    // THÊM LỊCH CHIẾU CHO PHIM
+    public ScheduleResponse createScheduleForMovie(ScheduleCreateRequest request){
+        Movie movie = getMovieById(request.getMovieId());
+        Schedule schedule = new Schedule();
+        schedule.setMovie(movie);
+        schedule.setDate(request.getDate());
+        scheduleRepository.save(schedule);
+        return scheduleMapper.mapperToResponse(schedule);
     }
 
     // LẤY PHIM BẰNG ID
@@ -37,7 +48,7 @@ public class ScheduleService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phim!"));
     }
 
-    // LẤY TẤT CẢ CÁC SUẤT CHIẾU BẰNG PHIM
+    // LẤY TẤT CẢ CÁC LỊCH CHIẾU BẰNG PHIM
     private List<Schedule> getSchedulesByMovie(Movie movie) {
         return scheduleRepository.findAllByMovie(movie);
     }
