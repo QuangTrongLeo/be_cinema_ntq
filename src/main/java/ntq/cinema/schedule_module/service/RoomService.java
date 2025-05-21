@@ -105,6 +105,8 @@ public class RoomService {
     }
 
     // XÓA PHÒNG CHIẾU RA KHỎI LỊCH CHIẾU
+
+    @Transactional
     public void deleteRoomFromSchedule(RoomDeleteFromScheduleRequest request){
         Room room = getRoomById(request.getRoomId());
         Schedule schedule = scheduleService.getScheduleById(request.getScheduleId());
