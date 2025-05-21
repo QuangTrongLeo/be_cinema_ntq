@@ -17,16 +17,59 @@ import java.util.List;
 public class MovieController {
     private final MovieService movieService;
 
+    // LẤY TẤT CẢ PHIM
     @GetMapping("/all")
     public ResponseEntity<List<MovieResponse>> getAllMovies() {
         List<MovieResponse> movies = movieService.getAllMovies();
         return ResponseEntity.ok(movies);
     }
 
+    // DANH SÁCH PHIM UPCOMING
+    @GetMapping("/up-coming")
+    public ResponseEntity<?> getMoviesStatusUpComing(){
+        try {
+            List<MovieResponse> movies = movieService.getMoviesStatusUpComing();
+            return ResponseEntity.ok(movies);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
+    }
+
+    // DANH SÁCH PHIM NOWSHOWING
+    @GetMapping("/now-showing")
+    public ResponseEntity<?> getMoviesStatusNowShowing(){
+        try {
+            List<MovieResponse> movies = movieService.getMoviesStatusNowShowing();
+            return ResponseEntity.ok(movies);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
+    }
+
+    // DANH SÁCH PHIM SHOPPED
+    @GetMapping("/stopped")
+    public ResponseEntity<?> getMoviesStatusStopped(){
+        try {
+            List<MovieResponse> movies = movieService.getMoviesStatusNowShowing();
+            return ResponseEntity.ok(movies);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
+    }
+
+    // LẤY CÁC PHIM BẰNG THỂ LOẠI PHIM
     @GetMapping
     public ResponseEntity<?> getMoviesByGenreName(@RequestParam String genre) {
         try {
-//            List<MovieResponse> movies = movieService.getMoviesByGenreName(genre);
             List<MovieResponse> movies = movieService.searchMoviesByGenreName(genre);
             return ResponseEntity.ok(movies);
         } catch (RuntimeException ex) {
@@ -38,7 +81,7 @@ public class MovieController {
         }
     }
 
-//    @PostMapping("/user")
+    // LẤY CÁC PHIM BẰNG TỪ KHÓA
     @GetMapping("/search")
     public ResponseEntity<?> searchMovies(@RequestParam String searched){
         try {

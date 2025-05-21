@@ -57,6 +57,13 @@ public class MovieService {
         return movieMapper.mapperToResponseList(movies);
     }
 
+    // DANH SÁCH PHIM ĐANG CHIẾU(NOW_SHOWING)
+    public List<MovieResponse> getMoviesStatusStopped() {
+        MovieStatus movieStatus = findMovieStatusIsStopped();
+        List<Movie> movies = getMoviesByMovieStatus(movieStatus);
+        return movieMapper.mapperToResponseList(movies);
+    }
+
 
     //4.1. Tìm kiếm phim theo tên
     public List<MovieResponse> searchMovies(String title){
@@ -110,6 +117,9 @@ public class MovieService {
         movie.setStatus(movieStatus);
         movie.setPosterUrl(posterUrl);
 
+        // Tạo suất chiếu
+
+
         // Lưu và trả response
         movieRepository.save(movie);
         return movieMapper.mapperToResponse(movie);
@@ -156,7 +166,13 @@ public class MovieService {
     // Lấy MovieStatus với trạng thái NOW_SHOWING
     private MovieStatus findMovieStatusIsNowShowing(){
         return movieStatusRepository.findByStatus(MovieStatusEnum.NOW_SHOWING)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái UPCOMING!"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái NOW_COMING!"));
+    }
+
+    // Lấy MovieStatus với trạng thái NOW_SHOWING
+    private MovieStatus findMovieStatusIsStopped(){
+        return movieStatusRepository.findByStatus(MovieStatusEnum.STOPPED)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái STOPPED!"));
     }
 
     // LẤY DANH SÁCH PHIM BẰNG TRẠNG THÁI PHIM
