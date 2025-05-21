@@ -12,22 +12,17 @@ import java.time.LocalTime;
 @Table(name = "show_time")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ShowTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long showtimeId;
 
     @ManyToOne
-    @JoinColumn(name = "schedule_id")
-    private Schedule schedule;
-
-    @ManyToOne
-    @JoinColumn(name = "room_id")
+    @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
     @Column(nullable = false)
     private LocalTime time;
 }
-

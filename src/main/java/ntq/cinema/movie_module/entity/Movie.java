@@ -5,16 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ntq.cinema.schedule_module.entity.Schedule;
 
 import java.time.LocalDate;
+import java.util.List;
 
 // Movie.java
 @Entity
 @Table(name = "movie")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,5 +45,8 @@ public class Movie {
     @ManyToOne
     @JoinColumn(name = "status_id")
     private MovieStatus status;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    private List<Schedule> schedules;
 }
 

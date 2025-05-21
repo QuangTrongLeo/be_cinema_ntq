@@ -1,6 +1,7 @@
 package ntq.cinema.schedule_module.service;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import ntq.cinema.movie_module.entity.Movie;
 import ntq.cinema.movie_module.repository.MovieRepository;
 import ntq.cinema.schedule_module.dto.request.schedule.ScheduleCreateRequest;
@@ -15,18 +16,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final MovieRepository movieRepository;
     private final ScheduleMapper scheduleMapper;
-
-    public ScheduleService(ScheduleRepository scheduleRepository,
-                           MovieRepository movieRepository,
-                           ScheduleMapper scheduleMapper) {
-        this.scheduleRepository = scheduleRepository;
-        this.movieRepository = movieRepository;
-        this.scheduleMapper = scheduleMapper;
-    }
 
     // LẤY TẤT CẢ LỊCH CHIẾU CỦA PHIM BẰNG ID CỦA PHIM
     public List<ScheduleResponse> getSchedulesByMovieId(long movieId) {
@@ -80,7 +74,7 @@ public class ScheduleService {
     }
 
     // LẤY LỊCH CHIẾU BẰNG ID
-    private Schedule getScheduleById(long scheduleId) {
+    public Schedule getScheduleById(long scheduleId) {
         return scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch chiếu!"));
     }

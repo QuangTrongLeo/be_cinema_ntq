@@ -1,16 +1,19 @@
 package ntq.cinema.schedule_module.service;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import ntq.cinema.booking_module.dto.response.seat.SeatResponse;
 import ntq.cinema.booking_module.entity.Seat;
 import ntq.cinema.booking_module.mapper.SeatMapper;
 import ntq.cinema.booking_module.repository.SeatRepository;
 import ntq.cinema.booking_module.service.SeatService;
+import ntq.cinema.schedule_module.dto.request.room.RoomAddForScheduleRequest;
 import ntq.cinema.schedule_module.dto.request.room.RoomCreateRequest;
 import ntq.cinema.schedule_module.dto.request.room.RoomUpdateRequest;
 import ntq.cinema.schedule_module.dto.response.room.RoomResponse;
 import ntq.cinema.schedule_module.dto.response.room.RoomWithSeatsResponse;
 import ntq.cinema.schedule_module.entity.Room;
+import ntq.cinema.schedule_module.entity.Schedule;
 import ntq.cinema.schedule_module.mapper.RoomMapper;
 import ntq.cinema.schedule_module.repository.RoomRepository;
 import org.springframework.stereotype.Service;
@@ -19,24 +22,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class RoomService {
     private final RoomRepository roomRepository;
     private final SeatService seatService;
     private final SeatRepository seatRepository;
     private final RoomMapper roomMapper;
     private final SeatMapper seatMapper;
+    private final ScheduleService scheduleService;
 
-    public RoomService(RoomRepository roomRepository,
-                       SeatService seatService,
-                       SeatRepository seatRepository,
-                       RoomMapper roomMapper,
-                       SeatMapper seatMapper) {
-        this.roomRepository = roomRepository;
-        this.seatService = seatService;
-        this.seatRepository = seatRepository;
-        this.roomMapper = roomMapper;
-        this.seatMapper = seatMapper;
-    }
 
     // DANH SÁCH PHÒNG CHIẾU
     public List<RoomResponse> getAllRooms(){
@@ -54,6 +48,7 @@ public class RoomService {
         return roomMapper.mapperToSeatsResponse(room, seatResponses);
     }
 
+    // <========== PHÒNH CHIẾU ===========>
     // TẠO PHÒNG CHIẾU
     @Transactional
     public RoomResponse createRoom(RoomCreateRequest request) {
@@ -90,9 +85,21 @@ public class RoomService {
         roomRepository.deleteById(roomId);
     }
 
+    // <========== PHÒNG CHIẾU VÀ LỊCH CHIẾU ==========>
+    // THÊM PHÒNG CHIẾU VÀO LỊCH CHIẾU
+    @Transactional
+    public RoomResponse addRoomForSchedule(RoomAddForScheduleRequest request){
+        Room room = getRoomById(request.getRoomId());
+        Schedule schedule = scheduleService.getScheduleById(request.getScheduleId());
+        return null;
+    }
+
+    // <========== PRIVATE ==========>
     // LẤY PHÒNG BẰNG ID
     private Room getRoomById(long roomId){
         return roomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng!"));
     }
+
+    //
 }
