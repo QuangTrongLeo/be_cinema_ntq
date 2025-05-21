@@ -29,7 +29,7 @@ public class User {
     private String username;
 
     @Column(name = "is_enabled")
-    private boolean isEnabled = false;
+    private boolean enabled = false;
 
     @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;

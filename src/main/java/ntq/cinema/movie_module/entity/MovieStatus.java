@@ -21,6 +21,12 @@ public class MovieStatus {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private MovieStatusEnum name;
+    private MovieStatusEnum status;
+
+
+    public MovieStatus(MovieStatusEnum status) {
+        this.status = status;
+    }
+
 }
 

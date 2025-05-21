@@ -26,7 +26,7 @@ public class MovieMapper {
                 .description(movie.getDescription())
                 .posterUrl(movie.getPosterUrl())
                 .genreName(movie.getGenre() != null ? movie.getGenre().getName() : null)
-                .statusName(movie.getStatus() != null ? movie.getStatus().getName().name() : null)
+                .statusName(movie.getStatus() != null ? movie.getStatus().getStatus().name() : null)
                 .build();
     }
 

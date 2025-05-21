@@ -13,9 +13,12 @@ public class MovieStatusLoader {
     @Bean
     public CommandLineRunner loadMovieStatus(MovieStatusRepository movieStatusRepository) {
         return args -> {
-            if (movieStatusRepository.count() == 0) {
-                movieStatusRepository.save(new MovieStatus(0L, MovieStatusEnum.UPCOMING));
-                movieStatusRepository.save(new MovieStatus(0L, MovieStatusEnum.NOW_SHOWING));
+            for (MovieStatusEnum statusEnum : MovieStatusEnum.values()) {
+                boolean exists = movieStatusRepository.existsByStatus(statusEnum);
+                if (!exists) {
+                    movieStatusRepository.save(new MovieStatus(statusEnum));
+                    System.out.println("Inserted missing movie status: " + statusEnum);
+                }
             }
         };
     }

@@ -8,5 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface MovieStatusRepository extends JpaRepository<MovieStatus, Long> {
-    Optional<MovieStatus> findByName(MovieStatusEnum movieStatusEnum);
+    Optional<MovieStatus> findByStatus(MovieStatusEnum movieStatusEnum);
+
+    boolean existsByStatus(MovieStatusEnum statusEnum);
 }

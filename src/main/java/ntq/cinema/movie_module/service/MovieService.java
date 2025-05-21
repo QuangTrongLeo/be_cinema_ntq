@@ -37,15 +37,26 @@ public class MovieService {
         this.s3Service = s3Service;
     }
 
+    // DANH SÁCH TẤT CẢ CÁC PHIM
     public List<MovieResponse> getAllMovies() {
         List<Movie> movies = movieRepository.findAllByOrderByMovieIdDesc();
         return movieMapper.mapperToResponseList(movies);
     }
 
-    public List<MovieResponse> getMoviesByStatus(MovieStatusEnum status) {
-        List<Movie> movies = movieRepository.findByStatus_NameOrderByMovieIdDesc(status);
+    // DANH SÁCH PHIM SẮP CHIẾU(UPCOMING)
+    public List<MovieResponse> getMoviesStatusUpComing() {
+        MovieStatus movieStatus = findMovieStatusIsUpComing();
+        List<Movie> movies = getMoviesByMovieStatus(movieStatus);
         return movieMapper.mapperToResponseList(movies);
     }
+
+    // DANH SÁCH PHIM ĐANG CHIẾU(NOW_SHOWING)
+    public List<MovieResponse> getMoviesStatusNowShowing() {
+        MovieStatus movieStatus = findMovieStatusIsNowShowing();
+        List<Movie> movies = getMoviesByMovieStatus(movieStatus);
+        return movieMapper.mapperToResponseList(movies);
+    }
+
 
     //4.1. Tìm kiếm phim theo tên
     public List<MovieResponse> searchMovies(String title){
@@ -109,7 +120,7 @@ public class MovieService {
         LocalDate today = LocalDate.now();
 
         // Lấy danh sách phim có releaseDate là hôm nay và đang có status là UPCOMING
-        List<Movie> moviesToUpdate = movieRepository.findByReleaseDateAndStatus_Name(today, MovieStatusEnum.UPCOMING);
+        List<Movie> moviesToUpdate = movieRepository.findByReleaseDateAndStatus(today, MovieStatusEnum.UPCOMING);
 
         if (moviesToUpdate.isEmpty()) return;
 
@@ -137,14 +148,20 @@ public class MovieService {
     }
 
     // Lấy MovieStatus với trạng thái UPCOMING
-    public MovieStatus findMovieStatusIsUpComing(){
-        return movieStatusRepository.findByName(MovieStatusEnum.UPCOMING)
+    private MovieStatus findMovieStatusIsUpComing(){
+        return movieStatusRepository.findByStatus(MovieStatusEnum.UPCOMING)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái UPCOMING!"));
     }
 
     // Lấy MovieStatus với trạng thái NOW_SHOWING
-    public MovieStatus findMovieStatusIsNowShowing(){
-        return movieStatusRepository.findByName(MovieStatusEnum.NOW_SHOWING)
+    private MovieStatus findMovieStatusIsNowShowing(){
+        return movieStatusRepository.findByStatus(MovieStatusEnum.NOW_SHOWING)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái UPCOMING!"));
     }
+
+    // LẤY DANH SÁCH PHIM BẰNG TRẠNG THÁI PHIM
+    private List<Movie> getMoviesByMovieStatus(MovieStatus movieStatus){
+        return movieRepository.findByStatus(movieStatus);
+    }
+
 }
