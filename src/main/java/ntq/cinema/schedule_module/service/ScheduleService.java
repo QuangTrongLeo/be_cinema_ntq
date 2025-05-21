@@ -67,16 +67,16 @@ public class ScheduleService {
         scheduleRepository.delete(schedule);
     }
 
-    // LẤY PHIM BẰNG ID
-    private Movie getMovieById(long movieId) {
-        return movieRepository.findById(movieId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy phim!"));
-    }
-
     // LẤY LỊCH CHIẾU BẰNG ID
     public Schedule getScheduleById(long scheduleId) {
         return scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch chiếu!"));
+    }
+
+    // LẤY PHIM BẰNG ID
+    private Movie getMovieById(long movieId) {
+        return movieRepository.findById(movieId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phim!"));
     }
 
     // LẤY TẤT CẢ CÁC LỊCH CHIẾU BẰNG PHIM

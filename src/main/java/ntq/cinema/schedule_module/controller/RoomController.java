@@ -1,10 +1,7 @@
 package ntq.cinema.schedule_module.controller;
 
 import lombok.RequiredArgsConstructor;
-import ntq.cinema.schedule_module.dto.request.room.RoomCreateRequest;
-import ntq.cinema.schedule_module.dto.request.room.RoomDeleteRequest;
-import ntq.cinema.schedule_module.dto.request.room.RoomGetIdRequest;
-import ntq.cinema.schedule_module.dto.request.room.RoomUpdateRequest;
+import ntq.cinema.schedule_module.dto.request.room.*;
 import ntq.cinema.schedule_module.dto.response.room.RoomResponse;
 import ntq.cinema.schedule_module.dto.response.room.RoomWithSeatsResponse;
 import ntq.cinema.schedule_module.dto.response.schedule.ScheduleResponse;
@@ -86,6 +83,34 @@ public class RoomController {
         } catch (RuntimeException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
+    }
+
+    // THÊM PHÒNG CHIẾU CHO LỊCH CHIẾU
+    @PostMapping("/for-schedule")
+    public ResponseEntity<?> addRoomForSchedule(@RequestBody RoomAddForScheduleRequest request){
+        try {
+            RoomResponse response = roomService.addRoomForSchedule(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
+    }
+
+    // XÓA PHÒNG CHIẾU RA KHỎI LỊCH CHIẾU
+    @DeleteMapping("/from-schedule")
+    public ResponseEntity<?> deleteRoomFromSchedule(@RequestBody RoomDeleteFromScheduleRequest request){
+        try {
+            roomService.deleteRoomFromSchedule(request);
+            return ResponseEntity.ok("Xóa phòng ra khỏi lịch chiếu thành công!");
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Lỗi hệ thống: " + ex.getMessage());
         }

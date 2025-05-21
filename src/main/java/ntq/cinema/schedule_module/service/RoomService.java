@@ -9,6 +9,7 @@ import ntq.cinema.booking_module.repository.SeatRepository;
 import ntq.cinema.booking_module.service.SeatService;
 import ntq.cinema.schedule_module.dto.request.room.RoomAddForScheduleRequest;
 import ntq.cinema.schedule_module.dto.request.room.RoomCreateRequest;
+import ntq.cinema.schedule_module.dto.request.room.RoomDeleteFromScheduleRequest;
 import ntq.cinema.schedule_module.dto.request.room.RoomUpdateRequest;
 import ntq.cinema.schedule_module.dto.response.room.RoomResponse;
 import ntq.cinema.schedule_module.dto.response.room.RoomWithSeatsResponse;
@@ -16,6 +17,7 @@ import ntq.cinema.schedule_module.entity.Room;
 import ntq.cinema.schedule_module.entity.Schedule;
 import ntq.cinema.schedule_module.mapper.RoomMapper;
 import ntq.cinema.schedule_module.repository.RoomRepository;
+import ntq.cinema.schedule_module.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +29,7 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final SeatService seatService;
     private final SeatRepository seatRepository;
+    private final ScheduleRepository scheduleRepository;
     private final RoomMapper roomMapper;
     private final SeatMapper seatMapper;
     private final ScheduleService scheduleService;
@@ -91,7 +94,24 @@ public class RoomService {
     public RoomResponse addRoomForSchedule(RoomAddForScheduleRequest request){
         Room room = getRoomById(request.getRoomId());
         Schedule schedule = scheduleService.getScheduleById(request.getScheduleId());
-        return null;
+
+        // Kiểm tra phòng đã có trong lích chiếu hay chưa
+        if (!schedule.getRooms().contains(room)) {
+            schedule.getRooms().add(room);
+            scheduleRepository.save(schedule);
+        }
+
+        return roomMapper.mapperToResponse(room);
+    }
+
+    // XÓA PHÒNG CHIẾU RA KHỎI LỊCH CHIẾU
+    public void deleteRoomFromSchedule(RoomDeleteFromScheduleRequest request){
+        Room room = getRoomById(request.getRoomId());
+        Schedule schedule = scheduleService.getScheduleById(request.getScheduleId());
+        // Kiểm tra phòng đã có trong lích chiếu hay chưa
+        if (!schedule.getRooms().contains(room)) {
+            roomRepository.delete(room);
+        }
     }
 
     // <========== PRIVATE ==========>
@@ -101,5 +121,4 @@ public class RoomService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng!"));
     }
 
-    //
 }
