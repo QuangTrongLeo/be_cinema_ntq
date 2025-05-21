@@ -52,7 +52,7 @@ public class MovieController {
         }
     }
 
-    // DANH SÁCH PHIM SHOPPED
+    // DANH SÁCH PHIM STOPPED
     @GetMapping("/stopped")
     public ResponseEntity<?> getMoviesStatusStopped(){
         try {

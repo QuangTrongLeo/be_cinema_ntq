@@ -10,6 +10,8 @@ import ntq.cinema.movie_module.mapper.MovieMapper;
 import ntq.cinema.movie_module.repository.GenreRepository;
 import ntq.cinema.movie_module.repository.MovieRepository;
 import ntq.cinema.movie_module.repository.MovieStatusRepository;
+import ntq.cinema.schedule_module.entity.Schedule;
+import ntq.cinema.schedule_module.repository.ScheduleRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,17 +24,20 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final MovieStatusRepository movieStatusRepository;
     private final GenreRepository genreRepository;
+    private final ScheduleRepository scheduleRepository;
     private final MovieMapper movieMapper;
     private final S3Service s3Service;
 
     public MovieService(MovieRepository movieRepository,
                         MovieStatusRepository movieStatusRepository,
                         GenreRepository genreRepository,
+                        ScheduleRepository scheduleRepository,
                         MovieMapper movieMapper,
                         S3Service s3Service) {
         this.movieRepository = movieRepository;
         this.movieStatusRepository = movieStatusRepository;
         this.genreRepository = genreRepository;
+        this.scheduleRepository = scheduleRepository;
         this.movieMapper = movieMapper;
         this.s3Service = s3Service;
     }
@@ -116,12 +121,16 @@ public class MovieService {
         movie.setGenre(genre);
         movie.setStatus(movieStatus);
         movie.setPosterUrl(posterUrl);
-
-        // Tạo suất chiếu
-
-
         // Lưu và trả response
         movieRepository.save(movie);
+
+        // Tạo suất chiếu
+        Schedule schedule = new Schedule();
+        schedule.setMovie(movie);
+        schedule.setDate(movie.getReleaseDate());
+        // Lưu vào db
+        scheduleRepository.save(schedule);
+
         return movieMapper.mapperToResponse(movie);
     }
 
