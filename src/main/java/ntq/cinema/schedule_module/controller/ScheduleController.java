@@ -1,7 +1,6 @@
 package ntq.cinema.schedule_module.controller;
 
 import lombok.RequiredArgsConstructor;
-import ntq.cinema.movie_module.dto.response.movie.MovieResponse;
 import ntq.cinema.schedule_module.dto.request.schedule.ScheduleCreateRequest;
 import ntq.cinema.schedule_module.dto.request.schedule.ScheduleDeleteRequest;
 import ntq.cinema.schedule_module.dto.request.schedule.ScheduleUpdateRequest;

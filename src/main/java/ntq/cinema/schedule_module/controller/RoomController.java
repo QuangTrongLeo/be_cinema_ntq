@@ -32,6 +32,20 @@ public class RoomController {
         }
     }
 
+    // DANH SÁCH TẤT CẢ CÁC PHÒNG CỦA LỊCH CHIẾU
+    @GetMapping("/by-schedule")
+    public ResponseEntity<?> getRoomsBySchedule(@RequestBody long scheduleId){
+        try {
+            List<RoomResponse> responses = roomService.getRoomsBySchedule(scheduleId);
+            return ResponseEntity.ok(responses);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
+    }
+
     // CHỌN PHÒNG CHIẾU
     @GetMapping("/get-room")
     public ResponseEntity<?> getRoomByRoomId(@RequestBody RoomGetIdRequest request){

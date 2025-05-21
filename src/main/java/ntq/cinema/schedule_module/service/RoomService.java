@@ -41,6 +41,13 @@ public class RoomService {
         return roomMapper.mapperToResponseList(rooms);
     }
 
+    // DANH SÁCH TẤT CẢ CÁC PHÒNG CỦA LỊCH CHIẾU
+    public List<RoomResponse> getRoomsBySchedule(long scheduleId){
+        Schedule schedule = scheduleService.getScheduleById(scheduleId);
+        List<Room> rooms = roomRepository.findAllBySchedule(schedule);
+        return roomMapper.mapperToResponseList(rooms);
+    }
+
     // CHỌN PHÒNG CHIẾU
     public RoomWithSeatsResponse getRoomByRoomId(long roomId) {
         Room room = getRoomById(roomId);
