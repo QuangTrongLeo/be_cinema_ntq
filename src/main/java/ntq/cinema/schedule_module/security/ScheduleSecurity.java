@@ -14,30 +14,29 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-public class RoomSecurity {
-
+public class ScheduleSecurity {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Value("${api.ntq-cinema-url}")
     private String cinemaApiBaseUrl;
 
-    private static final String ROOM_API = "/rooms";
+    private static final String SCHEDULE_API = "/schedules";
 
     @Autowired
-    public RoomSecurity(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public ScheduleSecurity(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChainRoom(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChainSchedule(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher(cinemaApiBaseUrl + ROOM_API + "/**")
+                .securityMatcher(cinemaApiBaseUrl + SCHEDULE_API + "/**")
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, cinemaApiBaseUrl + ROOM_API + "/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, cinemaApiBaseUrl + ROOM_API + "/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, cinemaApiBaseUrl + ROOM_API + "/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, cinemaApiBaseUrl + ROOM_API + "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, cinemaApiBaseUrl + SCHEDULE_API + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, cinemaApiBaseUrl + SCHEDULE_API + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, cinemaApiBaseUrl + SCHEDULE_API + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, cinemaApiBaseUrl + SCHEDULE_API + "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -48,7 +47,7 @@ public class RoomSecurity {
     }
 
     @Bean
-    public AuthenticationManager authenticationManagerRoom(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManagerSchedule(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }
