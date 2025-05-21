@@ -29,7 +29,7 @@ public class PaymentSecurity {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChainRoom(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChainPayment(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher(cinemaApiBaseUrl + PAYMENT_API + "/**")
                 .csrf(csrf -> csrf.disable())
@@ -48,7 +48,7 @@ public class PaymentSecurity {
     }
 
     @Bean
-    public AuthenticationManager authenticationManagerRoom(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManagerPayment(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }
