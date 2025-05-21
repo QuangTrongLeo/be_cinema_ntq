@@ -1,5 +1,6 @@
 package ntq.cinema.schedule_module.service;
 
+import jakarta.transaction.Transactional;
 import ntq.cinema.movie_module.entity.Movie;
 import ntq.cinema.movie_module.repository.MovieRepository;
 import ntq.cinema.schedule_module.dto.request.schedule.ScheduleCreateRequest;
@@ -35,6 +36,7 @@ public class ScheduleService {
     }
 
     // THÊM LỊCH CHIẾU CHO PHIM
+    @Transactional
     public ScheduleResponse createScheduleForMovie(ScheduleCreateRequest request){
         Movie movie = getMovieById(request.getMovieId());
         Schedule schedule = new Schedule();
@@ -45,6 +47,7 @@ public class ScheduleService {
     }
 
     // CẬP NHẬT LỊCH CHIẾU CHO PHIM
+    @Transactional
     public ScheduleResponse updateScheduleDateForMovie(ScheduleUpdateRequest request){
         Movie movie = getMovieById(request.getMovieId());
         Schedule schedule = getScheduleById(request.getScheduleId());
@@ -59,6 +62,7 @@ public class ScheduleService {
     }
 
     // XÓA LỊCH CHIẾU CHO PHIM
+    @Transactional
     public void deleteScheduleForMovie(ScheduleDeleteRequest request) {
         Movie movie = getMovieById(request.getMovieId());
         Schedule schedule = getScheduleById(request.getScheduleId());

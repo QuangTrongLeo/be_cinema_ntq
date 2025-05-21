@@ -46,8 +46,7 @@ public class RoomService {
 
     // CHỌN PHÒNG CHIẾU
     public RoomWithSeatsResponse getRoomByRoomId(long roomId) {
-        Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng với ID: " + roomId));
+        Room room = getRoomById(roomId);
 
         List<Seat> seats = seatRepository.findByRoom(room);
         List<SeatResponse> seatResponses = seatMapper.mapperToResponseList(seats);
@@ -75,14 +74,10 @@ public class RoomService {
     // CẬP NHẬT (TÊN) PHÒNG CHIẾU
     @Transactional
     public RoomResponse updateRoom(RoomUpdateRequest request) {
-        Optional<Room> room = roomRepository.findById(request.getRoomId());
-        if (room.isEmpty()) {
-            throw new RuntimeException("Không tìm thấy phòng!");
-        }
-
-        Room roomUpdate = room.get();
+        Room roomUpdate = getRoomById(request.getRoomId());
         roomUpdate.setName(request.getRoomName());
-        return roomMapper.mapperToResponse(roomRepository.save(roomUpdate));
+        roomRepository.save(roomUpdate);
+        return roomMapper.mapperToResponse(roomUpdate);
     }
 
     // XÓA PHÒNG CHIẾU
@@ -93,5 +88,11 @@ public class RoomService {
         }
         seatRepository.deleteByRoom_RoomId(roomId);
         roomRepository.deleteById(roomId);
+    }
+
+    // LẤY PHÒNG BẰNG ID
+    private Room getRoomById(long roomId){
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng!"));
     }
 }
