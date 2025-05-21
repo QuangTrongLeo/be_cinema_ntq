@@ -3,6 +3,7 @@ package ntq.cinema.schedule_module.service;
 import ntq.cinema.movie_module.entity.Movie;
 import ntq.cinema.movie_module.repository.MovieRepository;
 import ntq.cinema.schedule_module.dto.request.schedule.ScheduleCreateRequest;
+import ntq.cinema.schedule_module.dto.request.schedule.ScheduleDeleteRequest;
 import ntq.cinema.schedule_module.dto.request.schedule.ScheduleUpdateRequest;
 import ntq.cinema.schedule_module.dto.response.schedule.ScheduleResponse;
 import ntq.cinema.schedule_module.entity.Schedule;
@@ -48,13 +49,24 @@ public class ScheduleService {
         Movie movie = getMovieById(request.getMovieId());
         Schedule schedule = getScheduleById(request.getScheduleId());
         // Nếu muốn đảm bảo lịch chiếu thuộc về phim này, có thể kiểm tra thêm:
-        if (schedule.getMovie().getMovieId() != movie.getMovieId()) {
+        if (schedule.getMovie() == null || schedule.getMovie().getMovieId() != movie.getMovieId()) {
             throw new RuntimeException("Lịch chiếu không thuộc phim này!");
         }
 
         schedule.setDate(request.getDate());
         scheduleRepository.save(schedule);
         return scheduleMapper.mapperToResponse(schedule);
+    }
+
+    // XÓA LỊCH CHIẾU CHO PHIM
+    public void deleteScheduleForMovie(ScheduleDeleteRequest request) {
+        Movie movie = getMovieById(request.getMovieId());
+        Schedule schedule = getScheduleById(request.getScheduleId());
+        // Nếu muốn đảm bảo lịch chiếu thuộc về phim này, có thể kiểm tra thêm:
+        if (schedule.getMovie() == null || schedule.getMovie().getMovieId() != movie.getMovieId()) {
+            throw new RuntimeException("Lịch chiếu không thuộc phim này!");
+        }
+        scheduleRepository.delete(schedule);
     }
 
     // LẤY PHIM BẰNG ID

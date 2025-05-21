@@ -3,6 +3,7 @@ package ntq.cinema.schedule_module.controller;
 import lombok.RequiredArgsConstructor;
 import ntq.cinema.movie_module.dto.response.movie.MovieResponse;
 import ntq.cinema.schedule_module.dto.request.schedule.ScheduleCreateRequest;
+import ntq.cinema.schedule_module.dto.request.schedule.ScheduleDeleteRequest;
 import ntq.cinema.schedule_module.dto.request.schedule.ScheduleUpdateRequest;
 import ntq.cinema.schedule_module.dto.response.schedule.ScheduleResponse;
 import ntq.cinema.schedule_module.service.ScheduleService;
@@ -52,6 +53,20 @@ public class ScheduleController {
         try {
             ScheduleResponse response = scheduleService.updateScheduleDateForMovie(request);
             return ResponseEntity.ok(response);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
+    }
+
+    // XÓA LỊCH CHIẾU CHO PHIM
+    @DeleteMapping
+    public ResponseEntity<?> deleteScheduleForMovie(ScheduleDeleteRequest request){
+        try {
+            scheduleService.deleteScheduleForMovie(request);
+            return ResponseEntity.ok("Xóa lịch chiếu cho phim thành công!");
         } catch (RuntimeException ex){
             return ResponseEntity.badRequest().body(ex.getMessage());
         } catch (Exception ex) {
