@@ -14,15 +14,15 @@ import java.sql.Timestamp;
 @Table(name = "ticket")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ticketId;
 
-    @ManyToOne
-    @JoinColumn(name = "booking_id")
+    @OneToOne
+    @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
     @Column(name = "qr_code_url")
@@ -33,5 +33,9 @@ public class Ticket {
 
     @Column(name = "created_time")
     private Timestamp createdTime;
-}
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdTime = new Timestamp(System.currentTimeMillis());
+    }
+}

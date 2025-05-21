@@ -11,19 +11,20 @@ import lombok.Setter;
 @Table(name = "booking_seat")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class BookingSeat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long bookingSeatId;
 
     @ManyToOne
-    @JoinColumn(name = "booking_id")
+    @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
     @ManyToOne
-    @JoinColumn(name = "seat_id")
+    @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
 }
+
 

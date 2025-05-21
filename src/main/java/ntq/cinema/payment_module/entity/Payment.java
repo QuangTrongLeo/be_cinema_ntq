@@ -15,15 +15,15 @@ import java.sql.Timestamp;
 @Table(name = "payment")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long paymentId;
 
-    @ManyToOne
-    @JoinColumn(name = "booking_id")
+    @OneToOne
+    @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
     @Column(name = "payment_gateway", nullable = false)
@@ -39,4 +39,5 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatusEnum status;
 }
+
 
