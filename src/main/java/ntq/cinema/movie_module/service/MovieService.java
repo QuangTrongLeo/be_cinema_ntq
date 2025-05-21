@@ -10,8 +10,10 @@ import ntq.cinema.movie_module.mapper.MovieMapper;
 import ntq.cinema.movie_module.repository.GenreRepository;
 import ntq.cinema.movie_module.repository.MovieRepository;
 import ntq.cinema.movie_module.repository.MovieStatusRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -71,20 +73,15 @@ public class MovieService {
         return movieMapper.mapperToResponseList(movies);
     }
 
-//    // TÌM KIẾM PHIM BẰNG TỪ KHÓA
-//    public List<MovieResponse> searchMovies(String searchName) {
-//        List<Movie> movies = movieRepository.findByTitleContainingIgnoreCaseOrderByMovieIdDesc(searchName);
-//        return movieMapper.mapperToResponseList(movies);
-//    }
-//
-//    // TÌM CÁC PHIM BẰNG TÊN THỂ LOẠI
-//    public List<MovieResponse> searchMoviesByGenreName(String genreName) {
-//        List<Movie> movies = movieRepository.findAllByGenre_NameContaining(genreName);
-//        return movieMapper.mapperToResponseList(movies);
-//    }
 
     // TẠO PHIM MỚI
     public MovieResponse createMovie(MovieCreateRequest request){
+
+        LocalDate today = LocalDate.now();
+        if (request.getReleaseDate().isBefore(today)) {
+            throw new RuntimeException("Ngày phát hành không được nằm trong quá khứ!");
+        }
+
         String posterUrl = s3Service.uploadFile(request.getPosterFile());
 
         Genre genre = findGenreByGenreId(request.getGenreId());
@@ -107,6 +104,26 @@ public class MovieService {
         return movieMapper.mapperToResponse(movie);
     }
 
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void updateMovieStatusToNowShowing(){
+        LocalDate today = LocalDate.now();
+
+        // Lấy danh sách phim có releaseDate là hôm nay và đang có status là UPCOMING
+        List<Movie> moviesToUpdate = movieRepository.findByReleaseDateAndStatus_Name(today, MovieStatusEnum.UPCOMING);
+
+        if (moviesToUpdate.isEmpty()) return;
+
+        // Lấy trạng thái NOW_SHOWING
+        MovieStatus nowShowingStatus = findMovieStatusIsNowShowing();
+
+        for (Movie movie : moviesToUpdate) {
+            movie.setStatus(nowShowingStatus);
+        }
+
+        // Cập nhật sang trạng thái NOW_SHOWING cho tất cả các phim tới ngày releaseDate
+        movieRepository.saveAll(moviesToUpdate);
+    }
+
     // Lấy Genre theo ID của genre
     private Genre findGenreByGenreId(long genreId) {
         return genreRepository.findById(genreId)
@@ -122,6 +139,12 @@ public class MovieService {
     // Lấy MovieStatus với trạng thái UPCOMING
     public MovieStatus findMovieStatusIsUpComing(){
         return movieStatusRepository.findByName(MovieStatusEnum.UPCOMING)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái UPCOMING!"));
+    }
+
+    // Lấy MovieStatus với trạng thái NOW_SHOWING
+    public MovieStatus findMovieStatusIsNowShowing(){
+        return movieStatusRepository.findByName(MovieStatusEnum.NOW_SHOWING)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy trạng thái UPCOMING!"));
     }
 }

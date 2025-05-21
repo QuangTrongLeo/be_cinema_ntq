@@ -1,5 +1,6 @@
 package ntq.cinema.auth_module.service;
 
+import jakarta.transaction.Transactional;
 import ntq.cinema.auth_module.dto.request.LoginRequest;
 import ntq.cinema.auth_module.dto.request.RegisterRequest;
 import ntq.cinema.auth_module.dto.request.VerifyOtpRequest;
@@ -13,6 +14,7 @@ import ntq.cinema.auth_module.repository.UserOtpRepository;
 import ntq.cinema.auth_module.repository.UserRepository;
 import ntq.cinema.auth_module.util.RandomOtpUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 //@AllArgsConstructor
@@ -165,6 +169,29 @@ public class AuthService {
         RefreshToken token = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new RuntimeException("Refresh token không hợp lệ"));
         refreshTokenRepository.delete(token); // hoặc đánh dấu là revoked
+    }
+
+    @Scheduled(fixedRateString = "#{${otp.expiry.minutes} * 60 * 1000}")
+    @Transactional
+    public void deleteUnverifiedUsers() {
+        List<User> users = userRepository.findAllByEnabledFalse();
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+
+        for (User user : users) {
+            Optional<UserOtp> otpOtp = otpRepository.findTopByUserEmailOrderByExpiryTimeDesc(user.getEmail());
+            if (otpOtp.isPresent()) {
+                UserOtp otp = otpOtp.get();
+                if (otp.getExpiryTime().before(now) && !otp.isUsed()) {
+                    // Xóa OTP
+                    otpRepository.delete(otp);
+
+                    // Xóa User
+                    userRepository.delete(user);
+                    System.out.println("Xoá user chưa xác thực: " + user.getEmail());
+                }
+            }
+        }
     }
 
 }
