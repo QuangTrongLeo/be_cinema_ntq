@@ -36,6 +36,7 @@ public class SeatService {
         this.seatMapper = seatMapper;
     }
 
+    // <========== RESPONSE ==========>
     // LẤY THÔNG TIN CHỖ NGỒI BẰNG ID
     public SeatResponse getSeatById(long seatId){
         Seat seat = seatRepository.findById(seatId)
@@ -154,6 +155,12 @@ public class SeatService {
         seat.setStatus(seatStatus);
         seat = seatRepository.save(seat);
         return seatMapper.mapperToResponse(seat);
+    }
+
+    // <========== OBJ ==========>
+    // LẤY DANH SÁCH GHẾ
+    public List<Seat> getSeats(List<Long> seatIds){
+        return seatRepository.findAllById(seatIds);
     }
 
     // Tìm chỗ ngồi bằng id
