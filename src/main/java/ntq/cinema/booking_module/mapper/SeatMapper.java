@@ -14,7 +14,7 @@ public class SeatMapper {
                 .seatId(seat.getSeatId())
                 .seatName(seat.getName())
                 .seatPrice(seat.getPrice())
-                .statusName(seat.getStatus().getName().name())
+                .statusName(seat.getStatus().getStatus().name())
                 .roomName(seat.getRoom() != null ? seat.getRoom().getName() : null)
                 .build();
     }

@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface SeatStatusRepository extends JpaRepository<SeatStatus, Long> {
-    Optional<SeatStatus> findByName(SeatStatusEnum name);
+    Optional<SeatStatus> findByStatus(SeatStatusEnum status);
+
+    boolean existsByStatus(SeatStatusEnum status);
 }

@@ -12,7 +12,7 @@ public class SeatStatusMapper {
     public SeatStatusResponse mapperToResponse(SeatStatus seatStatus) {
         return SeatStatusResponse.builder()
                 .statusId(seatStatus.getStatusId())
-                .statusName(seatStatus.getName())
+                .statusName(seatStatus.getStatus())
                 .build();
     }
 

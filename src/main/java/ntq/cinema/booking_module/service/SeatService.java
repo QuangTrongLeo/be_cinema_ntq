@@ -39,15 +39,13 @@ public class SeatService {
     // <========== RESPONSE ==========>
     // LẤY THÔNG TIN CHỖ NGỒI BẰNG ID
     public SeatResponse getSeatById(long seatId){
-        Seat seat = seatRepository.findById(seatId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy chỗ ngồi!"));
+        Seat seat = findSeatById(seatId);
         return seatMapper.mapperToResponse(seat);
     }
 
     // TẠO CHỖ NGỒI
     public SeatResponse createSeat(SeatCreateRequest request){
-        SeatStatus availableStatus = seatStatusRepository.findByName(SeatStatusEnum.AVAILABLE)
-                .orElseThrow(() -> new RuntimeException("Trạng thái AVAILABLE không tồn tại"));
+        SeatStatus availableStatus = findByStatus(SeatStatusEnum.AVAILABLE);
         Room room = roomRepository.findById(request.getRoomId()).orElse(null);
         Seat seat = new Seat();
         seat.setRoom(room);
@@ -60,9 +58,7 @@ public class SeatService {
 
     // TẠO CÁC CHỖ NGỒI CHO PHÒNG CHIẾU
     public void createSeatsForRoom(Room room){
-        SeatStatus availableStatus = seatStatusRepository.findByName(SeatStatusEnum.AVAILABLE)
-                .orElseThrow(() -> new RuntimeException("Trạng thái AVAILABLE không tồn tại"));
-
+        SeatStatus availableStatus = findByStatus(SeatStatusEnum.AVAILABLE);
         List<Seat> seats = new ArrayList<>();
         for (char row = 'A'; row <= 'J'; row++) {
             for (int col = 1; col <= 16; col++){
@@ -118,12 +114,11 @@ public class SeatService {
     // CẬP NHẬT TRẠNG THÁI CHỖ NGỒI AVAILABLE CHO USER(SELECTING -> AVAILABLE)
     public SeatResponse updateSeatStatusAvailableForUser(long seatId){
         Seat seat = findSeatById(seatId);
-        SeatStatus seatStatus = seatStatusRepository.findByName(SeatStatusEnum.AVAILABLE)
-                .orElseThrow(() -> new RuntimeException("Trạng thái AVAILABLE không tồn tại!"));
+        SeatStatus seatStatus = findByStatus(SeatStatusEnum.AVAILABLE);
         if (seat.getStatus() == seatStatus){
             throw new RuntimeException("Chỗ ngồi đang cùng trạng thái AVAILABLE");
         }
-        if (seat.getStatus().getName().equals(SeatStatusEnum.BOOKED)){
+        if (seat.getStatus().getStatus().equals(SeatStatusEnum.BOOKED)){
             throw new RuntimeException("Không thể cập nhật lại trạng thái AVAILABLE");
         }
         seat.setStatus(seatStatus);
@@ -134,8 +129,7 @@ public class SeatService {
     // CẬP NHẬT TRẠNG THÁI CHỖ NGỒI SELECTING CHO USER (AVAILABLE -> SELECTING)
     public SeatResponse updateSeatStatusSelectingForUser(long seatId){
         Seat seat = findSeatById(seatId);
-        SeatStatus seatStatus = seatStatusRepository.findByName(SeatStatusEnum.SELECTING)
-                .orElseThrow(() -> new RuntimeException("Trạng thái SELECTING không tồn tại!"));
+        SeatStatus seatStatus = findByStatus(SeatStatusEnum.SELECTING);
         if (seat.getStatus() == seatStatus){
             throw new RuntimeException("Chỗ ngồi đang cùng trạng thái SELECTING");
         }
@@ -147,8 +141,7 @@ public class SeatService {
     // CẬP NHẬT TRẠNG THÁI CHỖ NGỒI BOOKED CHO CUSTOMER (SELECTING -> CUSTOMER)
     public SeatResponse updateSeatStatusBookedForCus(long seatId){
         Seat seat = findSeatById(seatId);
-        SeatStatus seatStatus = seatStatusRepository.findByName(SeatStatusEnum.BOOKED)
-                .orElseThrow(() -> new RuntimeException("Trạng thái BOOKED không tồn tại!"));
+        SeatStatus seatStatus = findByStatus(SeatStatusEnum.BOOKED);
         if (seat.getStatus() == seatStatus){
             throw new RuntimeException("Chỗ ngồi đang cùng trạng thái BOOKED");
         }
@@ -167,6 +160,11 @@ public class SeatService {
     private Seat findSeatById(long seatId) {
         return seatRepository.findById(seatId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chỗ ngồi!"));
+    }
+
+    private SeatStatus findByStatus(SeatStatusEnum status){
+        return seatStatusRepository.findByStatus(status)
+                .orElseThrow(() -> new RuntimeException("Trạng thái " + status.name() + " không tồn tại"));
     }
 
 }

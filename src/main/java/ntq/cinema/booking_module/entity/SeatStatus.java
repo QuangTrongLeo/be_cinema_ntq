@@ -18,5 +18,9 @@ public class SeatStatus {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SeatStatusEnum name;
+    private SeatStatusEnum status;
+
+    public SeatStatus(SeatStatusEnum status) {
+        this.status = status;
+    }
 }
