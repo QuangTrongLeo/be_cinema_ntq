@@ -31,7 +31,7 @@ public class BookingService {
     private final SeatService seatService;
     private final BookingMapper bookingMapper;
 
-    public BookingResponse createBookingForUser(BookingCreateRequest request) {
+    public BookingResponse createBookingForCus(BookingCreateRequest request) {
         // Lấy user và shotime trong DB
         User user = findUserById(request.getUserId());
         ShowTime showTime = findShowTimeById(request.getShowTimeId());

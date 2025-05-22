@@ -34,7 +34,7 @@ public class BookingSecurity {
                 .securityMatcher(cinemaApiBaseUrl + BOOKING_API + "/**")
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, cinemaApiBaseUrl + BOOKING_API + "/user/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, cinemaApiBaseUrl + BOOKING_API + "/cus/**").hasAnyRole("CUSTOMER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, cinemaApiBaseUrl + BOOKING_API + "/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, cinemaApiBaseUrl + BOOKING_API + "/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, cinemaApiBaseUrl + BOOKING_API + "/**").hasRole("ADMIN")

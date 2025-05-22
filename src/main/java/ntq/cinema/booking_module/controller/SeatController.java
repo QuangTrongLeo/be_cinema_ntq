@@ -2,8 +2,10 @@ package ntq.cinema.booking_module.controller;
 
 import lombok.RequiredArgsConstructor;
 import ntq.cinema.booking_module.dto.request.seat.*;
+import ntq.cinema.booking_module.dto.response.booking.BookingResponse;
 import ntq.cinema.booking_module.dto.response.seat.SeatResponse;
 import ntq.cinema.booking_module.service.SeatService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,64 +17,127 @@ public class SeatController {
 
     // LẤY CHỖ NGỒI
     @GetMapping("/get-seat")
-    public ResponseEntity<SeatResponse> getSeatById(@RequestBody SeatGetIdRequest request) {
-        SeatResponse response = seatService.getSeatById(request.getSeatId());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> getSeatById(@RequestBody SeatGetIdRequest request) {
+        try {
+            SeatResponse response = seatService.getSeatById(request.getSeatId());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
     }
 
     // THÊM CHỖ NGỒI
     @PostMapping
-    public ResponseEntity<SeatResponse> createSeat(@RequestBody SeatCreateRequest request){
-        SeatResponse response = seatService.createSeat(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> createSeat(@RequestBody SeatCreateRequest request){
+        try {
+            SeatResponse response = seatService.createSeat(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
     }
 
     // XÓA CHỖ NGỒI
     @DeleteMapping
-    public ResponseEntity<String> deleteSeat(@RequestBody SeatDeleteRequest request){
-        seatService.deleteSeat(request.getSeatId());
-        return ResponseEntity.ok("Xóa chỗ ngồi thành công :)");
+    public ResponseEntity<?> deleteSeat(@RequestBody SeatDeleteRequest request){
+        try {
+            seatService.deleteSeat(request.getSeatId());
+            return ResponseEntity.ok("Xóa chỗ ngồi thành công :)");
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
     }
 
     // CẬP NHẬT TÊN CHỖ NGỒI
     @PutMapping("/name")
-    public ResponseEntity<SeatResponse> updateSeatName(@RequestBody SeatUpdateNameRequest request){
-        SeatResponse response = seatService.updateSeatName(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> updateSeatName(@RequestBody SeatUpdateNameRequest request){
+        try {
+            SeatResponse response = seatService.updateSeatName(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
     }
 
     // CẬP NHẬT GIÁ CHỖ NGỒI
     @PutMapping("/price")
-    public ResponseEntity<SeatResponse> updateSeatPrice(@RequestBody SeatUpdatePriceRequest request){
-        SeatResponse response = seatService.updateSeatPrice(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> updateSeatPrice(@RequestBody SeatUpdatePriceRequest request){
+        try {
+            SeatResponse response = seatService.updateSeatPrice(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
     }
 
     // CẬP NHẬT TRẠNG THÁI CHỖ NGỒI
     @PutMapping("/status")
-    public ResponseEntity<SeatResponse> updateSeatStatus(@RequestBody SeatUpdateStatusRequest request){
-        SeatResponse response = seatService.updateSeatStatus(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> updateSeatStatus(@RequestBody SeatUpdateStatusRequest request){
+        try {
+            SeatResponse response = seatService.updateSeatStatus(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
     }
 
     // CẬP NHẬT TRẠNG THÁI CHỖ NGỒI AVAILABLE CHO USER(SELECTING -> AVAILABLE)
     @PutMapping("/user/status/available")
-    public ResponseEntity<SeatResponse> updateSeatStatusAvailable(@RequestBody SeatGetIdRequest request){
-        SeatResponse response = seatService.updateSeatStatusAvailableForUser(request.getSeatId());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> updateSeatStatusAvailable(@RequestBody SeatGetIdRequest request){
+        try {
+            SeatResponse response = seatService.updateSeatStatusAvailableForUser(request.getSeatId());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
     }
 
     // CẬP NHẬT TRẠNG THÁI CHỖ NGỒI SELECTING CHO USER (AVAILABLE -> SELECTING)
     @PutMapping("/user/status/selecting")
-    public ResponseEntity<SeatResponse> updateSeatStatusSelecting(@RequestBody SeatGetIdRequest request){
-        SeatResponse response = seatService.updateSeatStatusSelectingForUser(request.getSeatId());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> updateSeatStatusSelecting(@RequestBody SeatGetIdRequest request){
+        try {
+            SeatResponse response = seatService.updateSeatStatusSelectingForUser(request.getSeatId());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
     }
 
     // CẬP NHẬT TRẠNG THÁI CHỖ NGỒI BOOKED CHO CUSTOMER (SELECTING -> CUSTOMER)
     @PutMapping("/cus/status/booked")
-    public ResponseEntity<SeatResponse> updateSeatStatusBooked(@RequestBody SeatGetIdRequest request){
-        SeatResponse response = seatService.updateSeatStatusBookedForCus(request.getSeatId());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> updateSeatStatusBooked(@RequestBody SeatGetIdRequest request){
+        try {
+            SeatResponse response = seatService.updateSeatStatusBookedForCus(request.getSeatId());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + ex.getMessage());
+        }
     }
 }
