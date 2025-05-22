@@ -14,32 +14,31 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-public class SeatSecurity {
+public class BookingSecurity {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Value("${api.ntq-cinema-url}")
     private String cinemaApiBaseUrl;
 
-    private static final String SEAT_API = "/seats";
+    private static final String BOOKING_API = "/bookings";
 
     @Autowired
-    public SeatSecurity(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public BookingSecurity(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChainSeat(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChainBooking(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher(cinemaApiBaseUrl + SEAT_API + "/**")
+                .securityMatcher(cinemaApiBaseUrl + BOOKING_API + "/**")
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, cinemaApiBaseUrl + SEAT_API + "/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, cinemaApiBaseUrl + SEAT_API + "/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, cinemaApiBaseUrl + SEAT_API + "/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, cinemaApiBaseUrl + SEAT_API + "/cus/**").hasAnyRole("ADMIN", "CUSTOMER")
-                        .requestMatchers(HttpMethod.PUT, cinemaApiBaseUrl + SEAT_API + "/user/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, cinemaApiBaseUrl + SEAT_API + "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, cinemaApiBaseUrl + BOOKING_API + "/user/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, cinemaApiBaseUrl + BOOKING_API + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, cinemaApiBaseUrl + BOOKING_API + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, cinemaApiBaseUrl + BOOKING_API + "/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, cinemaApiBaseUrl + BOOKING_API + "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -50,7 +49,7 @@ public class SeatSecurity {
     }
 
     @Bean
-    public AuthenticationManager authenticationManagerSeat(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManagerBooking(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }
