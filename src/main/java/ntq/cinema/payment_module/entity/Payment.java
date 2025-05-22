@@ -35,9 +35,9 @@ public class Payment {
     @Column(name = "payment_time")
     private Timestamp paymentTime;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PaymentStatusEnum status;
+    @ManyToOne
+    @JoinColumn(name = "status_id", nullable = false)
+    private PaymentStatus status;
 }
 
 

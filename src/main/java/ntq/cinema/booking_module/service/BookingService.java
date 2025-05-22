@@ -11,7 +11,9 @@ import ntq.cinema.booking_module.entity.Seat;
 import ntq.cinema.booking_module.mapper.BookingMapper;
 import ntq.cinema.booking_module.repository.BookingRepository;
 import ntq.cinema.payment_module.entity.Payment;
+import ntq.cinema.payment_module.entity.PaymentStatus;
 import ntq.cinema.payment_module.enums.PaymentStatusEnum;
+import ntq.cinema.payment_module.repository.PaymentStatusRepository;
 import ntq.cinema.schedule_module.entity.ShowTime;
 import ntq.cinema.schedule_module.repository.ShowTimeRepository;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ShowTimeRepository showTimeRepository;
+    private final PaymentStatusRepository paymentStatusRepository;
     private final SeatService seatService;
     private final BookingMapper bookingMapper;
 
@@ -47,12 +50,16 @@ public class BookingService {
         // Tính tổng tiền
         int totalAmount = totalAmountOfBooking(seats);
 
+        // Tìm trạng thái thanh toán PENDING
+        PaymentStatus paymentStatusPending = findByStatusOfPayment(PaymentStatusEnum.PENDING);
+
         // Tạo Payment
         Payment payment = new Payment();
         payment.setBooking(booking);
         payment.setAmount(totalAmount);
         payment.setPaymentGateway("VNPAY");
-        payment.setStatus(PaymentStatusEnum.PENDING);
+        payment.setStatus(paymentStatusPending);
+        payment.setPaymentTime(null);
         booking.setPayment(payment);
 
         // Lưu Booking vào DB
@@ -89,6 +96,12 @@ public class BookingService {
         return seats.stream()
                 .mapToInt(Seat::getPrice)
                 .sum();
+    }
+
+    // TÌM TRẠNG THÁI CỦA PAYMENT
+    private PaymentStatus findByStatusOfPayment(PaymentStatusEnum status){
+        return paymentStatusRepository.findByStatus(status)
+                .orElseThrow(() -> new RuntimeException("Payment status " + status.name() + " not found"));
     }
 
 }
