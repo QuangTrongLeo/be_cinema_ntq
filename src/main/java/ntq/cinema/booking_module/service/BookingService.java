@@ -13,7 +13,7 @@ import ntq.cinema.booking_module.repository.BookingRepository;
 import ntq.cinema.payment_module.entity.Payment;
 import ntq.cinema.payment_module.entity.PaymentStatus;
 import ntq.cinema.payment_module.enums.PaymentStatusEnum;
-import ntq.cinema.payment_module.repository.PaymentStatusRepository;
+import ntq.cinema.payment_module.service.PaymentService;
 import ntq.cinema.schedule_module.entity.ShowTime;
 import ntq.cinema.schedule_module.repository.ShowTimeRepository;
 import org.springframework.stereotype.Service;
@@ -27,10 +27,11 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ShowTimeRepository showTimeRepository;
-    private final PaymentStatusRepository paymentStatusRepository;
+    private final PaymentService paymentService;
     private final SeatService seatService;
     private final BookingMapper bookingMapper;
 
+    // TẠO BOOKING CHO CUS
     public BookingResponse createBookingForCus(BookingCreateRequest request) {
         // Lấy user và shotime trong DB
         User user = findUserById(request.getUserId());
@@ -51,7 +52,7 @@ public class BookingService {
         int totalAmount = totalAmountOfBooking(seats);
 
         // Tìm trạng thái thanh toán PENDING
-        PaymentStatus paymentStatusPending = findByStatusOfPayment(PaymentStatusEnum.PENDING);
+        PaymentStatus paymentStatusPending = paymentService.findByStatusOfPayment(PaymentStatusEnum.PENDING);
 
         // Tạo Payment
         Payment payment = new Payment();
@@ -66,6 +67,18 @@ public class BookingService {
         bookingRepository.save(booking);
 
         return bookingMapper.mapperToResponse(booking);
+    }
+
+    // TÌM BOOKING
+    public Booking findBookingById(long bookingId) {
+        return bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Booking!"));
+    }
+
+    // XÓA BOOKING
+    public void deleteBookingById(long bookingId){
+        Booking booking = findBookingById(bookingId);
+        bookingRepository.delete(booking);
     }
 
     // TÌM USER
@@ -98,10 +111,6 @@ public class BookingService {
                 .sum();
     }
 
-    // TÌM TRẠNG THÁI CỦA PAYMENT
-    private PaymentStatus findByStatusOfPayment(PaymentStatusEnum status){
-        return paymentStatusRepository.findByStatus(status)
-                .orElseThrow(() -> new RuntimeException("Payment status " + status.name() + " not found"));
-    }
+
 
 }

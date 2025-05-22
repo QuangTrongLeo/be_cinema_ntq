@@ -38,6 +38,13 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
     private PaymentStatus status;
+
+    @PrePersist
+    protected void onPayment() {
+        if (paymentTime == null) {
+            this.paymentTime = new Timestamp(System.currentTimeMillis());
+        }
+    }
 }
 
 

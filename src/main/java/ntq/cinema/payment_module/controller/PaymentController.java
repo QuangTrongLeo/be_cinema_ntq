@@ -36,13 +36,16 @@ public class PaymentController {
 
     @GetMapping("/vnpay-return")
     public ResponseEntity<?> vnpayReturn(@RequestParam Map<String, String> params) {
-
         try {
-            // TODO: Kiểm tra chữ ký vnp_SecureHash để xác thực dữ liệu
             String responseCode = params.get("vnp_ResponseCode");
+            String bookingIdStr = params.get("vnp_TxnRef");
+            Long bookingId = Long.parseLong(bookingIdStr);
+
             if ("00".equals(responseCode)) {
+                paymentService.handlePaymentSuccess(bookingId);
                 return ResponseEntity.ok("Thanh toán thành công!");
             } else {
+                paymentService.handlePaymentFail(bookingId);
                 return ResponseEntity.ok("Thanh toán thất bại!");
             }
         } catch (RuntimeException ex){
